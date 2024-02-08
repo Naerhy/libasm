@@ -7,11 +7,12 @@ section .text
 	.loop:
 		cmp byte [rsi + rcx], 0
 		je .done
-		mov byte al, [rsi + rcx]
-		mov byte [rdi + rcx], al
+		mov al, [rsi + rcx]
+		mov [rdi + rcx], al
 		inc rcx
 		jmp .loop
 
 	.done:
+		mov byte [rdi + rcx], 0
 		mov rax, rdi
 		ret
