@@ -5,6 +5,16 @@
 #include <unistd.h>
 #include "libasm.h"
 
+int cmp_nb(int n1, int n2)
+{
+	if (n1 < n2)
+		return -1;
+	else if (n1 == n2)
+		return 0;
+	else
+		return 1;
+}
+
 int main(void)
 {
 	printf("ft_strlen:\n");
@@ -62,5 +72,34 @@ int main(void)
 	ssize_t x = ft_read(fd, buf, 10);
 	printf("x = %ld\n", x);
 	close(fd);
+
+	t_list* list = NULL;
+	int nb1 = 123;
+	int nb2 = 222;
+	printf("list size = %d\n", ft_list_size(list));
+	printf("nb = %d\n", nb1);
+	printf("nb address = %p\n", &nb1);
+	printf("list = %p\n", list);
+	ft_list_push_front(&list, (void*)(&nb1));
+	printf("list size = %d\n", ft_list_size(list));
+	printf("list after func = %p\n", list);
+	printf("list->next = %p\n", list->next);
+	void* data = list->data;
+	printf("list->data = %p\n", data);
+	printf("nb1 = %d\n", *((int*)data));
+
+	// pushing second node
+	ft_list_push_front(&list, (void*)(&nb2));
+	printf("list size = %d\n", ft_list_size(list));
+	printf("list->next = %p\n", list->next);
+	printf("second number = %d\n", *((int*)(list->data)));
+
+	printf("sort:\n");
+	printf("first number = %d\n", *((int*)(list->data)));
+	printf("second number = %d\n", *((int*)(list->next->data)));
+	ft_list_sort(&list, cmp_nb);
+	printf("first number = %d\n", *((int*)(list->data)));
+	printf("second number = %d\n", *((int*)(list->next->data)));
+
 	return 0;
 }
