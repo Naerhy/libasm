@@ -1,5 +1,6 @@
 NAME = libasm.a
 
+INC_DIR = inc
 SRC_DIR = src
 OBJ_DIR = obj
 
@@ -8,6 +9,9 @@ OBJ = $(patsubst $(SRC_DIR)/%.s,$(OBJ_DIR)/%.o,$(SRC))
 
 NASM = nasm
 NFLAGS = -f elf64
+
+CC = gcc
+CFLAGS = -Wall -Werror -Wextra
 
 RM = rm -rf
 
@@ -28,4 +32,9 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+test: all
+	$(CC) $(CFLAGS) tests/tests.c -I$(INC_DIR) -L. -lasm
+	./a.out
+	$(RM) a.out
+
+.PHONY: all clean fclean re test
