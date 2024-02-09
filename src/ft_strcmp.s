@@ -3,22 +3,21 @@ section .text
 
 	ft_strcmp:
 		xor rcx, rcx
-		xor rax, rax
 
 	.loop:
-		mov al, [rdi + rcx]
-		mov bl, [rsi + rcx]
-		cmp al, 0
+		mov r10b, [rdi + rcx]
+		mov r11b, [rsi + rcx]
+		cmp r10b, 0
 		je .done
-		cmp bl, 0
+		cmp r11b, 0
 		je .done
-		cmp al, bl
+		cmp r10b, r11b
 		jne .done
 		inc rcx
 		jmp .loop
 
 	.done:
-		movzx rax, al
-		movzx r8, bl
+		movzx rax, r10b
+		movzx r8, r11b
 		sub rax, r8
 		ret

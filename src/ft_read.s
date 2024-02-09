@@ -9,9 +9,9 @@ section .text
 		jge .done
 
 	.error:
-		mov rbx, rax
+		mov r8, rax
 		call __errno_location wrt ..plt
-		mov [rax], rbx
+		mov [rax], r8
 		mov rax, -1
 
 	.done:
