@@ -5,11 +5,16 @@
 #include <unistd.h>
 #include "libasm.h"
 
-int cmp_nb(int n1, int n2)
+static int cmp_nb(void* n1, void* n2)
 {
-	if (n1 < n2)
+	int nb1;
+	int nb2;
+
+	nb1 = *((int*)n1);
+	nb2 = *((int*)n2);
+	if (nb1 < nb2)
 		return -1;
-	else if (n1 == n2)
+	else if (nb1 == nb2)
 		return 0;
 	else
 		return 1;

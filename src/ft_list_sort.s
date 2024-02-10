@@ -15,7 +15,13 @@ section .text
 		je .second_loop_end
 		mov rdi, [r8]
 		mov rsi, [r9]
+		push r8
+		push r9
+		push r11
 		call r11
+		pop r11
+		pop r9
+		pop r8
 		cmp rax, 0
 		jg .swap
 

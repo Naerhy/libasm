@@ -5,19 +5,19 @@ section .text
 		xor rcx, rcx
 
 	.loop:
-		mov r10b, [rdi + rcx]
-		mov r11b, [rsi + rcx]
-		cmp r10b, 0
+		mov r8b, [rdi + rcx]
+		mov r9b, [rsi + rcx]
+		cmp r8b, 0
 		je .done
-		cmp r11b, 0
+		cmp r9b, 0
 		je .done
-		cmp r10b, r11b
+		cmp r8b, r9b
 		jne .done
 		inc rcx
 		jmp .loop
 
 	.done:
-		movzx rax, r10b
-		movzx r8, r11b
+		movzx rax, r8b
+		movzx r8, r9b
 		sub rax, r8
 		ret

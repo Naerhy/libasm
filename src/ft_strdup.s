@@ -5,15 +5,15 @@ section .text
 	extern ft_strcpy
 
 	ft_strdup:
-		mov r8, rdi
+		push rdi
 		call ft_strlen
 		mov rdi, rax
 		inc rdi
 		call malloc wrt ..plt
-		test rax, rax
-		jz .done
+		cmp rax, 0
+		je .done
 		mov rdi, rax
-		mov rsi, r8
+		pop rsi
 		call ft_strcpy
 
 	.done:
