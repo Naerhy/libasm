@@ -20,6 +20,11 @@ static int cmp_nb(void* n1, void* n2)
 		return 1;
 }
 
+static void free_nb(void* data)
+{
+	printf("nb to be freed = %d\n", *((int*)data));
+}
+
 int main(void)
 {
 	printf("ft_strlen:\n");
@@ -105,6 +110,21 @@ int main(void)
 	ft_list_sort(&list, cmp_nb);
 	printf("first number = %d\n", *((int*)(list->data)));
 	printf("second number = %d\n", *((int*)(list->next->data)));
+
+	printf("remove if:\n");
+	int nbb1 = 12;
+	int nbb2 = 24;
+	int nbb3 = 48;
+	t_list* llist = malloc(sizeof(t_list));
+	llist->data = (void*)&nbb1;
+	llist->next = malloc(sizeof(t_list));
+	llist->next->data = (void*)&nbb2;
+	llist->next->next = malloc(sizeof(t_list));
+	llist->next->next->data = (void*)&nbb3;
+	llist->next->next->next = NULL;
+	ft_list_remove_if(&llist, &nbb1, cmp_nb, free_nb);
+	ft_list_remove_if(&llist, &nbb3, cmp_nb, free_nb);
+	ft_list_remove_if(&llist, &nbb2, cmp_nb, free_nb);
 
 	return 0;
 }
