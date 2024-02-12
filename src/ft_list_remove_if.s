@@ -23,7 +23,7 @@ section .text
         pop rcx
         pop rdx
         pop rsi
-        cmp rax, 0
+        cmp eax, 0
         je .remove
         mov r14, r13
 

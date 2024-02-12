@@ -10,10 +10,10 @@ section .text
 		mov rdi, rax
 		inc rdi
 		call malloc wrt ..plt
+		pop rsi
 		cmp rax, 0
 		je .done
 		mov rdi, rax
-		pop rsi
 		call ft_strcpy
 
 	.done:

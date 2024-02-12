@@ -9,7 +9,6 @@ section .text
 		mov r12, rdi
 		mov r13, rsi
 		mov r14, [r12]
-		xor rdi, rdi
 		mov rdi, 16
 		call malloc wrt ..plt
 		cmp rax, 0

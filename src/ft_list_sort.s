@@ -6,7 +6,7 @@ section .text
 		mov r11, rsi
 
 	.first_loop:
-		cmp	r8, 0
+		cmp r8, 0
 		je .done
 		mov r9, [r8 + 8]
 
@@ -22,7 +22,7 @@ section .text
 		pop r11
 		pop r9
 		pop r8
-		cmp rax, 0
+		cmp eax, 0
 		jg .swap
 
 	.after_swap:
@@ -40,5 +40,5 @@ section .text
 		mov [r9], r10
 		jmp .after_swap
 
-	.done
+	.done:
 		ret
