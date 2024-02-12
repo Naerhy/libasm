@@ -15,8 +15,8 @@ size_t ft_strlen(char const* s);
 ssize_t ft_write(int fd, void const* buf, size_t count);
 
 void ft_list_push_front(t_list** begin_list, void* data);
+void ft_list_remove_if(t_list** begin_list, void* data, int (*cmp)(), void (*free_fct)(void*));
 int ft_list_size(t_list* begin_list);
 void ft_list_sort(t_list** begin_list, int (*cmp)());
-void ft_list_remove_if(t_list** begin_list, void* data, int (*cmp)(), void (*free_fct)(void*));
 
 #endif

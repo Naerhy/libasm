@@ -1,130 +1,191 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+
 #include "libasm.h"
 
-static int cmp_nb(void* n1, void* n2)
+static void test_ft_read(void)
+{
+	int fd;
+	char buf[128];
+	ssize_t ret;
+
+	fd = open("Makefile", O_RDONLY);
+	if (fd == -1)
+		return ;
+
+	ret = ft_read(fd, buf, 10);
+	assert(ret == 10);
+
+	ret = ft_read(fd, buf, 0);
+	assert(ret == 0);
+
+	ret = ft_read(fd, buf, 56);
+	assert(ret == 56);
+
+	ret = ft_read(-12, buf, 56);
+	assert(ret == -1 && errno == 9);
+
+	close(fd);
+}
+
+static void test_ft_strcmp(void)
+{
+	assert(ft_strcmp("test", "test") == 0);
+	assert(ft_strcmp("", "") == 0);
+	assert(ft_strcmp("abc", "def") == -3);
+	assert(ft_strcmp("", "def") == -100);
+	assert(ft_strcmp("abc", "") == 97);
+	assert(ft_strcmp("def", "abc") == 3);
+	assert(ft_strcmp("random", "randomly") == -108);
+}
+
+static void test_ft_strcpy(void)
+{
+	char buf[128];
+
+	ft_strcpy(buf, "I am a string");
+	assert(ft_strcmp(buf, "I am a string") == 0);
+
+	ft_strcpy(buf, "");
+	assert(ft_strcmp(buf, "") == 0);
+
+	ft_strcpy(buf, "this is a very long string\nwhich never ends\n\nbut I don't care...\t\n");
+	assert(ft_strcmp(buf, "this is a very long string\nwhich never ends\n\nbut I don't care...\t\n") == 0);
+}
+
+static void test_ft_strdup(void)
+{
+	char* s1;
+	char* s2;
+	char* s3;
+
+	s1 = ft_strdup("hahaha");
+	s2 = ft_strdup("");
+	s3 = ft_strdup("this is just a string made of words...");
+	assert(ft_strcmp(s1, "hahaha") == 0);
+	assert(ft_strcmp(s2, "") == 0);
+	assert(ft_strcmp(s3, "this is just a string made of words...") == 0);
+
+	free(s1);
+	free(s2);
+	free(s3);
+}
+
+static void test_ft_strlen(void)
+{
+	assert(ft_strlen("test") == 4);
+	assert(ft_strlen("") == 0);
+	assert(ft_strlen("0") == 1);
+	assert(ft_strlen("a string full of 0\n\0is still a string\0") == 19);
+}
+
+static void test_ft_write(void)
+{
+	ssize_t ret;
+	int fd;
+
+	ret = ft_write(1, "why end might ask civil again spoil\n", 36);
+	assert(ret == 36);
+
+	ret = ft_write(1, "", 0);
+	assert(ret == 0);
+
+	ret = ft_write(456, "test\n", 5);
+	assert(ret == -1 && errno == 9);
+
+	fd = open("Makefile", O_RDONLY);
+	if (fd == -1)
+		return ;
+	ret = ft_write(fd, "random word", 11);
+	assert(ret == -1 && errno == 9);
+	close(fd);
+}
+
+static void print_list(t_list* list)
+{
+	int nb;
+
+	printf("printing list:\n");
+	while (list)
+	{
+		nb = *((int*)list->data);
+		printf("nb = %d\n", nb);
+		list = list->next;
+	}
+}
+
+static int cmp_list(void* a, void* b)
 {
 	int nb1;
 	int nb2;
 
-	nb1 = *((int*)n1);
-	nb2 = *((int*)n2);
+	nb1 = *((int*)a);
+	nb2 = *((int*)b);
 	if (nb1 < nb2)
 		return -1;
-	else if (nb1 == nb2)
-		return 0;
-	else
+	else if (nb2 < nb1)
 		return 1;
+	else
+		return 0;
 }
 
-static void free_nb(void* data)
+static void free_list(void* data)
 {
-	printf("nb to be freed = %d\n", *((int*)data));
+	free(data);
+}
+
+static void test_ft_bonus(void)
+{
+	int** nbs;
+	int nbs_arr[6] = {27, 3, 44, 1, -1, 30};
+	size_t max;
+	t_list* list;
+
+	max = 6;
+	nbs = malloc(sizeof(int*) * max);
+	if (!nbs)
+		return ;
+	for (size_t i = 0; i < max; i++)
+	{
+		nbs[i] = malloc(sizeof(int));
+		if (!nbs[i])
+			return ;
+		nbs[i][0] = nbs_arr[i];
+	}
+	list = NULL;
+	for (size_t i = 0; i < max; i++)
+	{
+		ft_list_push_front(&list, (void*)nbs[i]);
+		if (i == 2)
+			assert(ft_list_size(list) == 3);
+	}
+	assert(ft_list_size(list) == 6);
+	print_list(list);
+	ft_list_sort(&list, cmp_list);
+	print_list(list);
+	ft_list_remove_if(&list, nbs_arr, cmp_list, free_list);
+	ft_list_remove_if(&list, nbs_arr + 4, cmp_list, free_list);
+	assert(ft_list_size(list) == 4);
+	ft_list_remove_if(&list, nbs_arr + 5, cmp_list, free_list);
+	ft_list_remove_if(&list, nbs_arr + 3, cmp_list, free_list);
+	ft_list_remove_if(&list, nbs_arr + 1, cmp_list, free_list);
+	ft_list_remove_if(&list, nbs_arr + 2, cmp_list, free_list);
+	assert(ft_list_size(list) == 0);
+	free(nbs);
 }
 
 int main(void)
 {
-	printf("ft_strlen:\n");
-	printf("length = %zu\n", ft_strlen("test"));
-	printf("length = %zu\n", ft_strlen(""));
-	printf("length = %zu\n", ft_strlen("0"));
-	// printf("length = %zu\n", ft_strlen(NULL)); // ERROR
-
-	printf("\n\n");
-
-	printf("ft_write:\n");
-	printf("errno = %d\n", errno);
-	printf("%ld\n", ft_write(1, "test\n", 5));
-	printf("errno = %d\n", errno);
-
-	printf("\n\n");
-
-	printf("ft_strcpy:\n");
-	char* s1;
-	char* s2;
-	s1 = malloc(120);
-	s2 = ft_strcpy(s1, "I am a string!");
-	printf("%s - %s\n", s1, s2);
-	s2 = ft_strcpy(s1, "test");
-	printf("%s - %s\n", s1, s2);
-	free(s1);
-
-	printf("\n\n");
-
-	printf("ft_strcmp:\n");
-	printf("%d\n", ft_strcmp("test", "test"));
-	printf("%d\n", ft_strcmp("", ""));
-	printf("%d\n", ft_strcmp("abc", "def"));
-	printf("%d\n", ft_strcmp("", "def"));
-	printf("%d\n", ft_strcmp("abc", ""));
-	printf("%d\n", ft_strcmp("def", "abc"));
-	printf("%d\n", ft_strcmp("random", "randomly"));
-
-	printf("\n\n");
-
-	printf("ft_strdup:\n");
-	char* s3;
-	s3 = ft_strdup("");
-	printf("%s\n", s3);
-	s3 = ft_strdup("this is a test");
-	printf("%s\n", s3);
-
-	printf("\n\n");
-
-	printf("ft_read:\n");
-	int fd = open("Makefile", O_RDONLY);
-	void* buf = malloc(120);
-	if (fd == -1)
-		printf("ERROR\n");
-	ssize_t x = ft_read(fd, buf, 10);
-	printf("x = %ld\n", x);
-	close(fd);
-
-	t_list* list = NULL;
-	int nb1 = 123;
-	int nb2 = 222;
-	printf("list size = %d\n", ft_list_size(list));
-	printf("nb = %d\n", nb1);
-	printf("nb address = %p\n", &nb1);
-	printf("list = %p\n", list);
-	ft_list_push_front(&list, (void*)(&nb1));
-	printf("list size = %d\n", ft_list_size(list));
-	printf("list after func = %p\n", list);
-	printf("list->next = %p\n", list->next);
-	void* data = list->data;
-	printf("list->data = %p\n", data);
-	printf("nb1 = %d\n", *((int*)data));
-
-	// pushing second node
-	ft_list_push_front(&list, (void*)(&nb2));
-	printf("list size = %d\n", ft_list_size(list));
-	printf("list->next = %p\n", list->next);
-	printf("second number = %d\n", *((int*)(list->data)));
-
-	printf("sort:\n");
-	printf("first number = %d\n", *((int*)(list->data)));
-	printf("second number = %d\n", *((int*)(list->next->data)));
-	ft_list_sort(&list, cmp_nb);
-	printf("first number = %d\n", *((int*)(list->data)));
-	printf("second number = %d\n", *((int*)(list->next->data)));
-
-	printf("remove if:\n");
-	int nbb1 = 12;
-	int nbb2 = 24;
-	int nbb3 = 48;
-	t_list* llist = malloc(sizeof(t_list));
-	llist->data = (void*)&nbb1;
-	llist->next = malloc(sizeof(t_list));
-	llist->next->data = (void*)&nbb2;
-	llist->next->next = malloc(sizeof(t_list));
-	llist->next->next->data = (void*)&nbb3;
-	llist->next->next->next = NULL;
-	ft_list_remove_if(&llist, &nbb1, cmp_nb, free_nb);
-	ft_list_remove_if(&llist, &nbb3, cmp_nb, free_nb);
-	ft_list_remove_if(&llist, &nbb2, cmp_nb, free_nb);
-
+	test_ft_read();
+	test_ft_strcmp();
+	test_ft_strcpy();
+	test_ft_strdup();
+	test_ft_strlen();
+	test_ft_write();
+	test_ft_bonus();
 	return 0;
 }
